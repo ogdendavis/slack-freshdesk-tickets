@@ -3,6 +3,10 @@ const debug = require('debug')('slash-command-template:ticket');
 const qs = require('querystring');
 const users = require('./users');
 
+// XMLHttpRequest lives in browsers, but we had to npm install it on the server
+// So require it!
+const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+
 /*
  *  Send ticket creation confirmation via
  *  chat.postMessage to the user who created it
@@ -65,6 +69,48 @@ const sendConfirmation = (ticket) => {
   });
 };
 
+// Send ticket to Freshdesk
+const createFreshTicket = (ticket) => {
+  // Create new XML request with appropriate endpoint from Freshdesk
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://sachsmedia.freshdesk.com/api/v2/tickets', true);
+
+  // Set headers. Not sure about the Authorization header?
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  const authorize = `Basic ${Buffer.from(process.env.FRESHDESK_API_KEY + ':X').toString('base64')}`;
+  xhr.setRequestHeader('Authorization', authorize);
+
+  // Set values from Slack ticket
+  const priority = ticket.urgeny === 'Low' ? 1 :
+                   ticket.urgency === 'High' ? 3 : 2;
+
+  const ticketBody = 'Client: ' + ticket.client + '<br>Website: ' + ticket.url + '<br>Username: ' + ticket.user + '<br>Password: ' + ticket.pass + '<br>Description:<br>' + ticket.description + '<br>Resources: ' + ticket.resources + '<br>Requested Due Date: ' + ticket.due + '<br>Urgency: ' + ticket.urgency;
+
+  // Create JSON object with data for the Freshdesk ticket
+  const payload = JSON.stringify({
+    'email': ticket.userEmail,
+    'subject': ticket.title,
+    'description': ticketBody,
+    'status': 2,
+    'priority': priority,
+    'source': 7,
+  });
+
+  // Handle responses
+  xhr.onreadystatechange = function() {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 201) {
+      console.log('Success');
+    }
+    else {
+      console.log(this.status);
+      console.log(this.responseText);
+    }
+  };
+
+  // Send it!
+  xhr.send(payload);
+};
+
 // Create helpdesk ticket. Call users.find to get the user's email address
 // from their user ID
 const create = (userId, submission) => {
@@ -83,11 +129,15 @@ const create = (userId, submission) => {
     ticket.title = submission.title;
     ticket.client = submission.client;
     ticket.url = submission.url;
+    ticket.user = submission.user;
+    ticket.pass = submission.pass;
     ticket.description = submission.description;
     ticket.resources = submission.resources;
     ticket.due = submission.due;
     ticket.urgency = submission.urgency;
     sendConfirmation(ticket);
+    // Sends ticket to Freshdesk
+    createFreshTicket(ticket);
 
     return ticket;
   }).catch((err) => { console.error(err); });
