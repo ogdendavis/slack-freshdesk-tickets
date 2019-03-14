@@ -12,7 +12,7 @@ const sendConfirmation = (ticket) => {
     token: process.env.SLACK_ACCESS_TOKEN,
     channel: ticket.userId,
     as_user: true,
-    text: 'Helpdesk ticket created!',
+    text: 'Web help ticket created!',
     attachments: JSON.stringify([
       {
         title: `Ticket created for ${ticket.userEmail}`,
@@ -25,17 +25,33 @@ const sendConfirmation = (ticket) => {
             value: ticket.title,
           },
           {
-            title: 'Description',
-            value: ticket.description || 'None provided',
+            title: 'Client',
+            value: ticket.client,
           },
           {
-            title: 'Status',
-            value: 'Open',
-            short: true,
+            title: 'Website',
+            value: ticket.url,
+          },
+          {
+            title: 'Description',
+            value: ticket.description,
+          },
+          {
+            title: 'Resources',
+            value: ticket.resources,
+          },
+          {
+            title: 'Requested completion date',
+            value: ticket.due,
           },
           {
             title: 'Urgency',
             value: ticket.urgency,
+            short: true,
+          },
+          {
+            title: 'Status',
+            value: 'Open',
             short: true,
           },
         ],
@@ -65,7 +81,11 @@ const create = (userId, submission) => {
     ticket.userId = userId;
     ticket.userEmail = result;
     ticket.title = submission.title;
+    ticket.client = submission.client;
+    ticket.url = submission.url;
     ticket.description = submission.description;
+    ticket.resources = submission.resources;
+    ticket.due = submission.due;
     ticket.urgency = submission.urgency;
     sendConfirmation(ticket);
 

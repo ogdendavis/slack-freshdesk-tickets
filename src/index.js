@@ -57,13 +57,45 @@ app.post('/command', (req, res) => {
             type: 'text',
             name: 'title',
             value: text,
-            hint: '30 second summary of the problem',
+          },
+          {
+            label: 'Client',
+            type: 'text',
+            name: 'client',
+          },
+          {
+            label: 'Website',
+            type: 'text',
+            subtype: 'url',
+            name: 'url',
+            hint: 'The URL at which something needs to be done',
+          },
+          {
+            label: 'Website username',
+            type: 'text',
+            name: 'user',
+          },
+          {
+            label: 'Website password',
+            type: 'text',
+            name: 'pass',
           },
           {
             label: 'Description',
             type: 'textarea',
             name: 'description',
-            optional: true,
+          },
+          {
+            label: 'Resources',
+            type: 'text',
+            subtype: 'url',
+            name: 'resources',
+            hint: 'Link to Google Drive folder which contains any resources needed to complete the task',
+          },
+          {
+            label: 'Requested completion date',
+            type: 'text',
+            name: 'due',
           },
           {
             label: 'Urgency',
