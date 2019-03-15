@@ -69,3 +69,10 @@ If you want to run it locally, I recommend creating a localhost tunnel with [ngr
         `ProxyRequests on
         ProxyPass / http://localhost:[node-port]/`
         * **Make sure that mod_proxy is enabled!**
+        * The node port is set in .env and/or index.js
+    * Gotta run the server persistently in the background! Here's the command to do so:
+          `node [path-to-index.js] > stdout.txt 2> stderr.txt &`
+      What it does:
+          * `node [path-to-index.js]` tells the app to serve, using index.js
+          * `> stdout.txt 2> stderr.txt` redirects console.log and error output to text files, preventing the server from crashing when it tries to route those messages to the terminal (since there won't be a terminal there, once you exit)
+          * `&` tells the process to run persistently in the background
