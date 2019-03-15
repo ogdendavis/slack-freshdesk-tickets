@@ -29,7 +29,7 @@ Use a slash command and a dialog to create a helpdesk ticket in a 3rd-party syst
     * Short description: `Create a helpdesk ticket`
     * Usage hint: `[the problem you're having]`
 
-If you did "Remix" on Glitch, it auto-generate a new URL with two random words, so your Request URL should be like: `https://fancy-feast.glitch.me/command`. 
+If you did "Remix" on Glitch, it auto-generate a new URL with two random words, so your Request URL should be like: `https://fancy-feast.glitch.me/command`.
 
 
 #### Enable Interactive Components
@@ -45,7 +45,7 @@ If you did "Remix" on Glitch, it auto-generate a new URL with two random words, 
     * `SLACK_SIGNING_SECRET`: Your app's Signing Secret (available on the **Basic Information** page)
 2. If you're running the app locally, run the app (`npm start`). Or if you're using Glitch, it automatically starts the app.
 
-#### Run the app 
+#### Run the app
 
 1. Get the code
     * Clone this repo and run `npm install`
@@ -55,3 +55,17 @@ If you did "Remix" on Glitch, it auto-generate a new URL with two random words, 
 3. If you're running the app locally, run the app (`npm start`).
 
 If you want to run it locally, I recommend creating a localhost tunnel with [ngrok](https://ngrok.com)!
+
+#### SMG-Specific info
+
+* [Original starter template](https://github.com/slackapi/template-slash-command-and-dialogs)
+* Dependencies:
+    * npm install xmlhttprequest (it's not native to Node)
+* Repo note: .env is gitignored, so don't destroy the server version, or you'll have to recreate it
+* Server notes:
+    * Node/npm is a weird version on the server. Had to manually copy node_modules from my local up to the server
+    * Also had to update node version to 10.15 using nvm and by specifying in .nvmrc
+    * Apache gets in the way, so after setting up the site on the server, add the following into the config file for the server (/etc/apache2/sites-enabled/[site-name].conf):
+        `ProxyRequests on
+        ProxyPass / http://localhost:[node-port]/`
+        * **Make sure that mod_proxy is enabled!**
