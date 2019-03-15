@@ -96,16 +96,16 @@ const createFreshTicket = (ticket) => {
     'source': 7,
   });
 
-  // Handle responses
-  xhr.onreadystatechange = function() {
-    if (this.readyState === XMLHttpRequest.DONE && this.status === 201) {
-      console.log('Success');
-    }
-    else {
-      console.log(this.status);
-      console.log(this.responseText);
-    }
-  };
+  // Handle responses -- mainly for testing, disable in production to avoid overwhelming logs
+  // xhr.onreadystatechange = function() {
+  //   if (this.readyState === XMLHttpRequest.DONE && this.status === 201) {
+  //     console.log('Success');
+  //   }
+  //   else {
+  //     console.log(this.status);
+  //     console.log(this.responseText);
+  //   }
+  // };
 
   // Send it!
   xhr.send(payload);
