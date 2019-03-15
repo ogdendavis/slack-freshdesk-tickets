@@ -73,6 +73,8 @@ If you want to run it locally, I recommend creating a localhost tunnel with [ngr
     * Gotta run the server persistently in the background! Here's the command to do so:
           `node [path-to-index.js] > stdout.txt 2> stderr.txt &`
       What it does:
-          * `node [path-to-index.js]` tells the app to serve, using index.js
-          * `> stdout.txt 2> stderr.txt` redirects console.log and error output to text files, preventing the server from crashing when it tries to route those messages to the terminal (since there won't be a terminal there, once you exit)
-          * `&` tells the process to run persistently in the background
+        * `node [path-to-index.js]` tells the app to serve, using index.js
+        * `> stdout.txt 2> stderr.txt` redirects console.log and error output to text files, preventing the server from crashing when it tries to route those messages to the terminal (since there won't be a terminal there, once you exit)
+        * `&` tells the process to run persistently in the background
+    * Whenever the app is updated, you'll need to kill the and restart the server process for updates to be live
+        * To kill server process: `killall node` (assuming it's the only node process on the server)
