@@ -8,6 +8,9 @@ const ticket = require('./ticket');
 const signature = require('./verifySignature');
 const debug = require('debug')('slash-command-template:index');
 
+// Custom module to handle inline-chat ticket creation
+const chat = require('./chat');
+
 const apiUrl = 'https://slack.com/api';
 
 const app = express();
@@ -147,6 +150,21 @@ app.post('/interactive', (req, res) => {
     debug('Token mismatch');
     res.sendStatus(404);
   }
+});
+
+// Endpoint to receive chat messages
+// Receives chats and send responses, creates Helpdesk ticket when done
+app.post('/chat', (req, res) => {
+  // Test for auth token (not super-sercure, but better than nothing)
+  if (req.body.token !== process.env.SLACK_LEGACY_TOKEN) {
+    res.sendStatus(403);
+  }
+  // Immediately send 200 response
+  const response = req.body.type === 'url_verification' ? req.body.challenge : '';
+  res.send(response);
+  console.log(req.body);
+  // Send the chat message to be interpreted
+  chat.read(req.body.event.user, req.body.event.type, req.body.event.text);
 });
 
 const server = app.listen(process.env.PORT || 5000, () => {
