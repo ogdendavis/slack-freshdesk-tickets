@@ -163,10 +163,10 @@ app.post('/chat', (req, res) => {
   // Immediately send 200 response
   const response = req.body.type === 'url_verification' ? req.body.challenge : '';
   res.send(response);
-  console.log(req.body);
+  
   // Send the chat message to be interpreted
   if (req.body.hasOwnProperty('event')) {
-    chat.read(req.body.event.user, req.body.event.type, req.body.event.text);
+    chat.read(req.body.event);
   }
 });
 
