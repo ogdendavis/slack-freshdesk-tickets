@@ -45,7 +45,7 @@ app.post('/command', (req, res) => {
     // create the dialog payload - includes the dialog structure, Slack API token,
     // and trigger ID
     const dialog = {
-      token: process.env.SLACK_ACCESS_TOKEN,
+      token: process.env.SLACK_OAUTH_TOKEN,
       trigger_id,
       dialog: JSON.stringify({
         title: 'Submit a helpdesk ticket',

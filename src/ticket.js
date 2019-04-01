@@ -71,6 +71,7 @@ const sendConfirmation = (ticket) => {
 
 // Send ticket to Freshdesk
 const createFreshTicket = (ticket) => {
+  console.log('createFreshTicket');
   // Create new XML request with appropriate endpoint from Freshdesk
   const xhr = new XMLHttpRequest();
   xhr.open('POST', 'https://sachsmedia.freshdesk.com/api/v2/tickets', true);
@@ -96,17 +97,6 @@ const createFreshTicket = (ticket) => {
     'source': 7,
   });
 
-  // Handle responses -- mainly for testing, disable in production to avoid overwhelming logs
-  // xhr.onreadystatechange = function() {
-  //   if (this.readyState === XMLHttpRequest.DONE && this.status === 201) {
-  //     console.log('Success');
-  //   }
-  //   else {
-  //     console.log(this.status);
-  //     console.log(this.responseText);
-  //   }
-  // };
-
   // Send it!
   xhr.send(payload);
 };
@@ -119,6 +109,7 @@ const create = (userId, submission) => {
   const fetchUserEmail = new Promise((resolve, reject) => {
     users.find(userId).then((result) => {
       debug(`Find user: ${userId}`);
+      console.log(result.data);
       resolve(result.data.user.profile.email);
     }).catch((err) => { reject(err); });
   });
