@@ -12,16 +12,16 @@ const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
  *  chat.postMessage to the user who created it
  */
 const sendConfirmation = (ticket) => {
+  // Hard-coded channel is to #web-tickets
   axios.post('https://slack.com/api/chat.postMessage', qs.stringify({
-    token: process.env.SLACK_ACCESS_TOKEN,
-    channel: ticket.userId,
-    as_user: true,
-    text: 'Web help ticket created!',
+    token: process.env.SLACK_BOT_TOKEN,
+    channel: 'CGZR0K2NT',
+    text: '<!channel> Web help ticket created!',
     attachments: JSON.stringify([
       {
         title: `Ticket created for ${ticket.userEmail}`,
         // Get this from the 3rd party helpdesk system
-        title_link: 'http://example.com',
+        title_link: 'https://sachsmedia.freshdesk.com/a/dashboard/default',
         text: ticket.text,
         fields: [
           {
@@ -99,6 +99,8 @@ const createFreshTicket = (ticket) => {
   // Send it!
   xhr.send(payload);
 };
+
+
 
 // Create helpdesk ticket. Call users.find to get the user's email address
 // from their user ID
