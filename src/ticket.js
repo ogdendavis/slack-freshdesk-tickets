@@ -109,7 +109,6 @@ const create = (userId, submission) => {
   const fetchUserEmail = new Promise((resolve, reject) => {
     users.find(userId).then((result) => {
       debug(`Find user: ${userId}`);
-      console.log(result.data);
       resolve(result.data.user.profile.email);
     }).catch((err) => { reject(err); });
   });

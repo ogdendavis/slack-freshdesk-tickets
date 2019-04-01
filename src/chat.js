@@ -98,12 +98,11 @@ const chatSend = (channel, message = 'I am a bot. My name is Rob.') => {
     username: 'rob_bot',
   });
 
-  xhr.send(payload);
+  setTimeout(xhr.send, 300, payload);
 }
 
 // Helper function to make the Freshdesk ticket
 const sendTicket = (finishedTicket) => {
-  console.log(finishedTicket);
   // Make an array of the answers, in order
   const submission = Object.keys(finishedTicket.questions).map(key => finishedTicket.questions[key].reply);
 
@@ -132,7 +131,7 @@ const chatHandler = (chatEvent, thisTicket) => {
   // Case for first question
   if (thisTicket.onQuestion === null) {
     chatSend(channel, 'Ok, let\'s make a new web support ticket for you!');
-    chatSend(channel, thisTicket.questions[0].query);
+    setTimeout(chatSend, 1000, channel, thisTicket.questions[0].query);
     thisTicket.onQuestion = 0;
     // Update the ticket in progress
     updateTIP(user, thisTicket);
