@@ -1,5 +1,5 @@
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-const userProfile = require('./userProfile');
+// const userProfile = require('./userProfile');
 const ticket = require('./ticket')
 
 // Export function -- reads chat messages and sends them to the handler
