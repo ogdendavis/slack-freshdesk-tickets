@@ -12,6 +12,10 @@ temp*
 .AppleDouble
 .LSOverride
 
+logs/*
+stderr.txt
+stdout.txt
+
 ### IDE Settings (EditorConfig/Sublime)
 .editorconfig
 
