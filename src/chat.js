@@ -4,8 +4,8 @@ const ticket = require('./ticket')
 
 // Export function -- reads chat messages and sends them to the handler
 const read = (chatEvent) => {
-  // If it's a bot message, ignore it! This avoids infinite loops
-  if (chatEvent.subtype === 'bot_message') {
+  // If it's a bot message or NOT a direct message, ignore it! This avoids infinite loops
+  if (chatEvent.subtype === 'bot_message' || chatEvent.channel_type !== 'im') {
     return;
   }
   // If it's not a bot message, do stuff!
@@ -88,17 +88,28 @@ const chatSend = (channel, message = 'I am a bot. My name is Rob.') => {
 
   // Set headers.
   xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-  xhr.setRequestHeader('Authorization', `Bearer ${process.env.SLACK_OAUTH_TOKEN}`);
+  xhr.setRequestHeader('Authorization', `Bearer ${process.env.SLACK_BOT_TOKEN}`);
 
   // Create the response!
   const payload = JSON.stringify({
     channel: channel,
     text: message,
     as_user: false,
-    username: 'rob_bot',
   });
 
-  setTimeout(xhr.send, 300, payload);
+  // Handle responses -- mainly for testing, disable in production to avoid overwhelming logs
+  // xhr.onreadystatechange = function() {
+  //   if (this.readyState === XMLHttpRequest.DONE && this.status === 201) {
+  //     console.log('Success');
+  //   }
+  //   else {
+  //     console.log(this.status);
+  //     console.log(this.responseText);
+  //   }
+  // };
+
+  //setTimeout(xhr.send, 300, payload);
+  xhr.send(payload);
 }
 
 // Helper function to make the Freshdesk ticket

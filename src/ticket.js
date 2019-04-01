@@ -71,7 +71,6 @@ const sendConfirmation = (ticket) => {
 
 // Send ticket to Freshdesk
 const createFreshTicket = (ticket) => {
-  console.log('createFreshTicket');
   // Create new XML request with appropriate endpoint from Freshdesk
   const xhr = new XMLHttpRequest();
   xhr.open('POST', 'https://sachsmedia.freshdesk.com/api/v2/tickets', true);
