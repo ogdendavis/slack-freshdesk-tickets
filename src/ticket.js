@@ -20,8 +20,7 @@ const sendConfirmation = (ticket) => {
     attachments: JSON.stringify([
       {
         title: `Ticket created for ${ticket.userEmail}`,
-        // Get this from the 3rd party helpdesk system
-        title_link: 'https://sachsmedia.freshdesk.com/a/dashboard/default',
+        title_link: 'https://sachsmedia.freshdesk.com/a/tickets',
         text: ticket.text,
         fields: [
           {
