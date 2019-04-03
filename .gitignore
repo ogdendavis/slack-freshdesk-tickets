@@ -5,6 +5,8 @@ test
 temp*
 
 .env
+ngrok
+
 
 ### https://raw.github.com/github/gitignore/b304edf487ce607174e188712225b5269d43f279/Global/OSX.gitignore
 
