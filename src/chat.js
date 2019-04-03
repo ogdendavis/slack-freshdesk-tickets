@@ -1,5 +1,4 @@
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-const ticket = require('./ticket');
 const users = require('./users');
 const chatTIP = require('./chatTIP');
 
@@ -55,27 +54,6 @@ const chatSend = (channel, message = 'I am a bot. My name is Rob.') => {
   xhr.send(payload);
 }
 
-// Helper function to make the Freshdesk ticket
-const sendTicket = (finishedTicket) => {
-  // Make an array of the answers, in order
-  const submission = Object.keys(finishedTicket.questions).map(key => finishedTicket.questions[key].reply);
-
-  // Put the info in the format required by ticket.create
-  const formattedTicket = {
-    title: submission[1],
-    client: submission[0],
-    url: submission[2],
-    user: submission[3],
-    pass: submission[4],
-    description: submission[5],
-    resources: submission[6],
-    due: submission[7],
-    urgency: '',
-  }
-
-  ticket.create(finishedTicket.user, formattedTicket);
-}
-
 // Main function -- updates ticketsInProgress with incoming info until ready to send
 const chatHandler = (chatEvent, thisTicket) => {
   const user = chatEvent.user;
@@ -102,7 +80,7 @@ const chatHandler = (chatEvent, thisTicket) => {
     }
     else {
       chatSend(channel, 'Ok, I should have everything I need. Thanks!');
-      sendTicket(thisTicket);
+      chatTIP.sendTIP(thisTicket);
       delete ticketsInProgress[user];
     }
   }

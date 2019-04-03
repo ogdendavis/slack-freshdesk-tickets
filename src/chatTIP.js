@@ -1,4 +1,5 @@
 // TIP = ticket in progress
+const ticket = require('./ticket');
 
 // Helper function to create new tickets for ticketsInProgress
 // Modify this return object to control/change the content/order of questions
@@ -48,4 +49,25 @@ const makeNewTIP = (userId) => {
   return newTicket;
 }
 
-module.exports = { makeNewTIP }
+// Helper function to make the Freshdesk ticket from the (finished) TIP
+const sendTIP = (finishedTicket) => {
+  // Make an array of the answers, in order
+  const submission = Object.keys(finishedTicket.questions).map(key => finishedTicket.questions[key].reply);
+
+  // Put the info in the format required by ticket.create
+  const formattedTicket = {
+    title: submission[1],
+    client: submission[0],
+    url: submission[2],
+    user: submission[3],
+    pass: submission[4],
+    description: submission[5],
+    resources: submission[6],
+    due: submission[7],
+    urgency: '',
+  }
+
+  ticket.create(finishedTicket.user, formattedTicket);
+}
+
+module.exports = { makeNewTIP, sendTIP }
