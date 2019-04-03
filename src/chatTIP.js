@@ -6,7 +6,7 @@ const ticket = require('./ticket');
 const makeNewTIP = (userId) => {
   const newTicket = {
     user: userId,
-    onQuestion: null,
+    onQuestion: -1,
     questions: {
       0: {
         query: 'What client is this for?',
@@ -70,4 +70,4 @@ const sendTIP = (finishedTicket) => {
   ticket.create(finishedTicket.user, formattedTicket);
 }
 
-module.exports = { makeNewTIP, sendTIP }
+module.exports = { makeNewTIP, sendTIP };

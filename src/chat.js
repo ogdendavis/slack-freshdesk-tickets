@@ -1,8 +1,9 @@
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const users = require('./users');
 const chatTIP = require('./chatTIP');
+const chatCommand = require('./chatCommand');
 
-// Object to hold in-progress tickets -- managed by chatTIP methods
+// Object to hold in-progress tickets -- managed by chatHandler & chatTIP methods
 const ticketsInProgress = {};
 
 // Export function -- reads chat messages and sends them to the handler
@@ -11,19 +12,49 @@ const read = (chatEvent) => {
   if (chatEvent.subtype === 'bot_message' || chatEvent.channel_type !== 'im') {
     return;
   }
-  // If it's not a bot message, do stuff!
-  else {
-    const userId = chatEvent.user;
-    // If the user doesn't have a ticket in progress, start one!
-    if (!ticketsInProgress.hasOwnProperty(userId)) {
-      ticketsInProgress[userId] = chatTIP.makeNewTIP(userId);
+
+  // Gather info
+  const user = chatEvent.user;
+  const channel = chatEvent.channel;
+  const text = chatEvent.text;
+  const command = chatCommand.checkForCommand(text);
+  let thisTicket = ticketsInProgress[user] || false;
+
+  // Check if there's a command and, if so, do it!
+  if (command) {
+    // response is: { newTicket: (false or object), message: (string) }
+    const response = chatCommand.execute(command, user);
+
+    switch (command) {
+      case 'cancel':
+      case 'delete':
+        if (!thisTicket) { break; }
+        delete ticketsInProgress[user];
+      case 'help':
+        send(channel, response.message);
+        return;
+      case 'silly':
+        send(channel, silliness[Math.floor(Math.random()*silliness.length)]);
+        return;
+      case 'start':
+        thisTicket = response.newTicket;
+        send(channel, response.message);
     }
-    chatHandler(chatEvent, ticketsInProgress[userId]);
   }
+
+  // If no ticket created, and no command input, give help message
+  if (!thisTicket) {
+    send(channel, chatCommand.execute('help', user).message);
+    return;
+  }
+
+  // At this point, the message should be either starting a new ticket (created
+  // here as thisTicket) or answering a question. Pass it off to chatHandler!
+  chatHandler(user, channel, text, thisTicket);
 }
 
 // Helper function to send chat message
-const chatSend = (channel, message = 'I am a bot. My name is Rob.') => {
+const send = (channel, message = 'I am a bot. My name is Rob.') => {
   // Create new XML request with appropriate endpoint from Slack
   const xhr = new XMLHttpRequest();
   xhr.open('POST', 'https://slack.com/api/chat.postMessage', true);
@@ -50,40 +81,75 @@ const chatSend = (channel, message = 'I am a bot. My name is Rob.') => {
   //   }
   // };
 
-  //setTimeout(xhr.send, 300, payload);
+  // A small delay makes the chat feel less abrupt
+  // setTimeout(xhr.send, 150, payload);
   xhr.send(payload);
 }
 
 // Main function -- updates ticketsInProgress with incoming info until ready to send
-const chatHandler = (chatEvent, thisTicket) => {
-  const user = chatEvent.user;
-  const channel = chatEvent.channel;
+const chatHandler = (user, channel, text, thisTicket) => {
+  const nextQuestion = thisTicket.onQuestion + 1;
 
-  // Case for first question
-  if (thisTicket.onQuestion === null) {
-    chatSend(channel, 'Ok, let\'s make a new web support ticket for you!');
-    setTimeout(chatSend, 1000, channel, thisTicket.questions[0].query);
-    thisTicket.onQuestion = 0;
+  // The first time we get here, we need to ask the first question!
+  // onQuestion is initialized as -1
+  if (nextQuestion === 0) {
+    setTimeout(send, 1000, channel, thisTicket.questions[nextQuestion].query);
+    //send(channel, thisTicket.questions[nextQuestion].query);
+    thisTicket.onQuestion++;
+    ticketsInProgress[user] = thisTicket;
+  }
+
+  // Case for chats that are replies to questions
+  else if (nextQuestion < thisTicket.questions.howMany) {
+    // Store the answer, increment the counter, send the next question
+    thisTicket.questions[thisTicket.onQuestion].reply = text;
+    thisTicket.onQuestion++;
+    send(channel, thisTicket.questions[thisTicket.onQuestion].query);
     // Update the ticket in progress
     ticketsInProgress[user] = thisTicket;
   }
-  // Case for all others
   else {
-    const nextQuestion = thisTicket.onQuestion + 1;
-    if (nextQuestion < thisTicket.questions.howMany) {
-      // Store the answer, increment the counter, send the next question
-      thisTicket.questions[thisTicket.onQuestion].reply = chatEvent.text;
-      thisTicket.onQuestion++;
-      chatSend(channel, thisTicket.questions[thisTicket.onQuestion].query);
-      // Update the ticket in progress
-      ticketsInProgress[user] = thisTicket;
-    }
-    else {
-      chatSend(channel, 'Ok, I should have everything I need. Thanks!');
-      chatTIP.sendTIP(thisTicket);
-      delete ticketsInProgress[user];
-    }
+    send(channel, 'Ok, great! I should have everything I need. Your ticket has been created, and you will hear from the web team shortly. :ticket: :white_check_mark:');
+    chatTIP.sendTIP(thisTicket);
+    delete ticketsInProgress[user];
   }
 }
 
-module.exports = { read }
+module.exports = { read };
+
+const silliness = ['Did you hear about the restaurant on the moon? Great food, no atmosphere.',
+'What do you call a fake noodle? An Impasta.',
+'How many apples grow on a tree? All of them.',
+'Want to hear a joke about paper? Nevermind it\'s tearable.',
+'I just watched a program about beavers. It was the best dam program I\'ve ever seen.',
+'Why did the coffee file a police report? It got mugged.',
+'How does a penguin build its house? Igloos it together.',
+'Rob Bot, did you get a haircut? No I got them all cut.',
+'Why did the scarecrow win an award? Because he was outstanding in his field.',
+'Why don\'t skeletons ever go trick or treating? Because they have no body to go with.',
+'I\'ll call you later. Don\'t call me later, call me Rob Bot',
+'What do you call an elephant that doesn\'t matter? An irrelephant.',
+'Want to hear a joke about construction? I\'m still working on it.',
+'What do you call cheese that isn\'t yours? Nacho Cheese.',
+'Why couldn\'t the bicycle stand up by itself? It was two tired.',
+'What did the grape do when he got stepped on? He let out a little wine.',
+'I wouldn\'t buy anything with velcro. It\'s a total rip-off.',
+'The shovel was a ground-breaking invention.',
+'This graveyard looks overcrowded. People must be dying to get in here.',
+'5/4 of people admit that they\’re bad with fractions.',
+'Two goldfish are in a tank. One says to the other, "do you know how to drive this thing?"',
+'What do you call a man with a rubber toe? Roberto.',
+'What do you call a fat psychic? A four-chin teller.',
+'I would avoid the sushi if I was you. It’s a little fishy.',
+'To the man in the wheelchair that stole my camouflage jacket... You can hide but you can\'t run.',
+'The rotation of earth really makes my day.',
+'I thought about going on an all-almond diet. But that\'s just nuts.',
+'What\'s brown and sticky? A stick.',
+'I\’ve never gone to a gun range before. I decided to give it a shot!',
+'Why do you never see elephants hiding in trees? Because they\'re so good at it.',
+'Did you hear about the kidnapping at school? It\'s fine, he woke up.',
+'A furniture store keeps calling me. All I wanted was one night stand.',
+'I used to work in a shoe recycling shop. It was sole destroying.',
+'Did I tell you the time I fell in love during a backflip? I was heels over head.',
+'I don’t play soccer because I enjoy the sport. I\’m just doing it for kicks.',
+'People don’t like having to bend over to get their drinks. We really need to raise the bar.'];
