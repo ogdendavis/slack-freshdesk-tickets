@@ -89,6 +89,13 @@ const send = (channel, message = 'I am a bot. My name is Rob.') => {
 
 // Main function -- updates ticketsInProgress with incoming info until ready to send
 const chatHandler = (user, channel, text, thisTicket) => {
+  // Early return if response is invalid
+  if (!chatValidate.isValid(text, thisTicket)) {
+    send(channel, 'Invalid response. Please try again.');
+    send(channel, thisTicket.questions[thisTicket.onQuestion].query);
+    return;
+  }
+
   const nextQuestion = thisTicket.onQuestion + 1;
 
   // The first time we get here, we need to ask the first question!

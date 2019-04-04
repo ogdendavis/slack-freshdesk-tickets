@@ -1,4 +1,5 @@
 // Used to identify and execute commands in incoming chat messages
+
 const chatTIP = require('./chatTIP');
 
 const checkForCommand = (text) => {
