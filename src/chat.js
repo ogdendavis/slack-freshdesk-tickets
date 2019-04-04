@@ -2,6 +2,7 @@ const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const users = require('./users');
 const chatTIP = require('./chatTIP');
 const chatCommand = require('./chatCommand');
+const chatValidate = require('.chatValidate');
 
 // Object to hold in-progress tickets -- managed by chatHandler & chatTIP methods
 const ticketsInProgress = {};
@@ -20,7 +21,6 @@ const read = (chatEvent) => {
   const command = chatCommand.checkForCommand(text);
   let thisTicket = ticketsInProgress[user] || false;
 
-  // Check if there's a command and, if so, do it!
   if (command) {
     // response is: { newTicket: (false or object), message: (string) }
     const response = chatCommand.execute(command, user);
@@ -37,6 +37,9 @@ const read = (chatEvent) => {
         send(channel, silliness[Math.floor(Math.random()*silliness.length)]);
         return;
       case 'start':
+        if (thisTicket) {
+          break;
+        }
         thisTicket = response.newTicket;
         send(channel, response.message);
     }
@@ -48,8 +51,6 @@ const read = (chatEvent) => {
     return;
   }
 
-  // At this point, the message should be either starting a new ticket (created
-  // here as thisTicket) or answering a question. Pass it off to chatHandler!
   chatHandler(user, channel, text, thisTicket);
 }
 
