@@ -2,7 +2,7 @@ const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const users = require('./users');
 const chatTIP = require('./chatTIP');
 const chatCommand = require('./chatCommand');
-const chatValidate = require('.chatValidate');
+const chatValidate = require('./chatValidate');
 
 // Object to hold in-progress tickets -- managed by chatHandler & chatTIP methods
 const ticketsInProgress = {};
@@ -109,7 +109,10 @@ const chatHandler = (user, channel, text, thisTicket) => {
     // Update the ticket in progress
     ticketsInProgress[user] = thisTicket;
   }
+  // Case for last question answered
   else {
+    // Remember to store the last answer!
+    thisTicket.questions[thisTicket.onQuestion].reply = text;
     send(channel, 'Ok, great! I should have everything I need. Your ticket has been created, and you will hear from the web team shortly. :ticket: :white_check_mark:');
     chatTIP.sendTIP(thisTicket);
     delete ticketsInProgress[user];
