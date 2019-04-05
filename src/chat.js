@@ -92,7 +92,7 @@ const chatHandler = (user, channel, text, thisTicket) => {
   // Early return if response is invalid
   if (!chatValidate.isValid(text, thisTicket)) {
     send(channel, 'Invalid response. Please try again.');
-    send(channel, thisTicket.questions[thisTicket.onQuestion].query);
+    setTimeout(send, 500, channel, thisTicket.questions[thisTicket.onQuestion].query);
     return;
   }
 

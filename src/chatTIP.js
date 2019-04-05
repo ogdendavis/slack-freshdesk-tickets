@@ -13,7 +13,7 @@ const makeNewTIP = (userId) => {
         reply: '',
       },
       1: {
-        query: 'Give me a one-sentence overview of what you need.',
+        query: 'Give me an overview of what you need in just a few words.',
         reply: '',
       },
       2: {
