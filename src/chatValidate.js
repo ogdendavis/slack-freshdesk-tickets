@@ -7,25 +7,20 @@ const isValid = (text, ticket) => {
   }
 
   switch (ticket.onQuestion) {
-    case 0: // What client is this for?
-      break;
     case 1: // One-sentence overview
       return sentenceCheck(text);
     case 2: // website URL
-    case 6: // resource URL
       return urlCheck(text);
     case 3: // website login
     case 4: // website password
       return credentialCheck(text);
     case 5: // long description
-      break;
-    // case 6 is under case 2, above
+    case 6: // resource location (not necessarily url)
     case 7: // due dates
-      break;
+    case 0: // client
     default:
       return true;
   }
-  return true;
 }
 
 const urlCheck = (slackifiedText) => {
