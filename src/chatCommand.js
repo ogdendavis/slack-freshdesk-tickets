@@ -6,7 +6,7 @@ const checkForCommand = (text) => {
   // Convert chatText to lowercase and remove punctuation
   const input = text.toLowerCase().replace(/\W/g, '');
   // Check array of known commands against input
-  return ['start','cancel','delete','help','silly'].includes(input) ? input : false;
+  return ['start','ticket','cancel','delete','help','silly'].includes(input) ? input : false;
 }
 
 const execute = (command, user=false) => {
@@ -14,6 +14,7 @@ const execute = (command, user=false) => {
 
   switch (command) {
     case('start'):
+    case('ticket');
       response.newTicket = chatTIP.makeNewTIP(user);
       response.message = 'Ok, let\'s make a new web support ticket for you! :computer: :ticket: :sunglasses:';
       break;
