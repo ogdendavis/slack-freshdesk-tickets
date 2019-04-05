@@ -64,7 +64,7 @@ const sendTIP = (finishedTicket) => {
     description: submission[5],
     resources: slackSanitize(submission[6]),
     due: submission[7],
-    urgency: '',
+    urgency: 'Medium',
   }
 
   ticket.create(finishedTicket.user, formattedTicket);
