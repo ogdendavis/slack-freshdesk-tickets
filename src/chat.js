@@ -3,14 +3,16 @@ const users = require('./users');
 const chatTIP = require('./chatTIP');
 const chatCommand = require('./chatCommand');
 const chatValidate = require('./chatValidate');
+const debug = require('debug')('slash-command-template:index');
 
 // Object to hold in-progress tickets -- managed by chatHandler & chatTIP methods
 const ticketsInProgress = {};
 
 // Export function -- reads chat messages and sends them to the handler
 const read = (chatEvent) => {
-  // If it's a bot message or NOT a direct message, ignore it! This avoids infinite loops
-  if (chatEvent.subtype === 'bot_message' || chatEvent.channel_type !== 'im') {
+  // Ignoring all subtypes avoids bot messages (subtype==='bot_message') and URL previews (subtype==='message_changed')
+  if (chatEvent.hasOwnProperty('subtype') || chatEvent.channel_type !== 'im') {
+    debug('chatEvent ignored in chat.js read');
     return;
   }
 
