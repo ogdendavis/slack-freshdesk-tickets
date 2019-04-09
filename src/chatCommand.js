@@ -14,7 +14,7 @@ const execute = (command, user=false) => {
 
   switch (command) {
     case('start'):
-    case('ticket');
+    case('ticket'):
       response.newTicket = chatTIP.makeNewTIP(user);
       response.message = 'Ok, let\'s make a new web support ticket for you! :computer: :ticket: :sunglasses:';
       break;
