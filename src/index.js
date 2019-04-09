@@ -7,11 +7,8 @@ const qs = require('querystring');
 const ticket = require('./ticket');
 const signature = require('./verifySignature');
 const debug = require('debug')('slash-command-template:index');
-
-// Custom module to handle inline-chat ticket creation
 const chat = require('./chat');
-
-const apiUrl = 'https://slack.com/api';
+const commandTicket = require('./commandTicket');
 
 const app = express();
 
@@ -45,84 +42,17 @@ app.post('/command', (req, res) => {
 
   // Verify the signing secret
   if (signature.isVerified(req)) {
-    // create the dialog payload - includes the dialog structure, Slack API token,
-    // and trigger ID
-    const dialog = {
-      token: process.env.SLACK_OAUTH_TOKEN,
-      trigger_id,
-      dialog: JSON.stringify({
-        title: 'Submit a helpdesk ticket',
-        callback_id: 'submit-ticket',
-        submit_label: 'Submit',
-        elements: [
-          {
-            label: 'Title',
-            type: 'text',
-            name: 'title',
-            value: text,
-          },
-          {
-            label: 'Client',
-            type: 'text',
-            name: 'client',
-          },
-          {
-            label: 'Website',
-            type: 'text',
-            subtype: 'url',
-            name: 'url',
-            hint: 'The URL at which something needs to be done',
-          },
-          {
-            label: 'Website username',
-            type: 'text',
-            name: 'user',
-          },
-          {
-            label: 'Website password',
-            type: 'text',
-            name: 'pass',
-          },
-          {
-            label: 'Description',
-            type: 'textarea',
-            name: 'description',
-          },
-          {
-            label: 'Resources',
-            type: 'text',
-            subtype: 'url',
-            name: 'resources',
-            hint: 'Link to Google Drive folder which contains any resources needed to complete the task',
-          },
-          {
-            label: 'Requested completion date',
-            type: 'text',
-            name: 'due',
-          },
-          {
-            label: 'Urgency',
-            type: 'select',
-            name: 'urgency',
-            options: [
-              { label: 'Low', value: 'Low' },
-              { label: 'Medium', value: 'Medium' },
-              { label: 'High', value: 'High' },
-            ],
-          },
-        ],
-      }),
-    };
-
-    // open the dialog by calling dialogs.open method and sending the payload
-    axios.post(`${apiUrl}/dialog.open`, qs.stringify(dialog))
-      .then((result) => {
-        debug('dialog.open: %o', result.data);
-        res.send('');
-      }).catch((err) => {
-        debug('dialog.open call failed: %o', err);
-        res.sendStatus(500);
-      });
+    // Now handle the commands!
+    switch (req.body.command) {
+      case '/ticket':
+        commandTicket.execute(text, trigger_id, res);
+        break;
+      case '/webhelp':
+        console.log('webhelp!');
+        break;
+      default:
+        debug('no recognized command');
+    }
   } else {
     debug('Verification token mismatch');
     res.sendStatus(404);
@@ -163,7 +93,7 @@ app.post('/chat', (req, res) => {
   // Immediately send 200 response
   const response = req.body.type === 'url_verification' ? req.body.challenge : '';
   res.send(response);
-  
+
   // Send the chat message to be interpreted
   if (req.body.hasOwnProperty('event')) {
     chat.read(req.body.event);
