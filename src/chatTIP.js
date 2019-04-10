@@ -75,7 +75,7 @@ const sendTIP = (finishedTicket) => {
 // If no protocol: 'google.com' => '<http://google.com|google.com>'
 // This effs with ticket creation, so strip out the extra to pass a simple string
 const slackSanitize = (text) => {
-  return text.split('|')[0].slice(1,-1);
+  return text.split('|')[0].slice(1);
 }
 
 module.exports = { makeNewTIP, sendTIP };

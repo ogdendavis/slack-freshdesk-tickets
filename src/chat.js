@@ -37,6 +37,7 @@ const read = (chatEvent) => {
         send(channel, response.message);
         return;
       case 'start':
+      case 'ticket':
         if (thisTicket) {
           break;
         }
