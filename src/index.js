@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
 app.post('/command', (req, res) => {
   // extract the slash command text, and trigger ID from payload
   const { text, user_id, trigger_id } = req.body;
-
+  
   // Verify the signing secret
   if (signature.isVerified(req)) {
     // Now handle the commands!
@@ -49,7 +49,7 @@ app.post('/command', (req, res) => {
         commandTicket.execute(text, trigger_id, res);
         break;
       case '/webhelp':
-        commandWebhelp.execute(text, trigger_id, user_id, res);
+        commandWebhelp.execute(user_id);
         break;
       default:
         debug('no recognized command');

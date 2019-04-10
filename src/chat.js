@@ -10,8 +10,8 @@ const ticketsInProgress = {};
 
 // Export function -- reads chat messages and sends them to the handler
 const read = (chatEvent) => {
-  // Ignoring all subtypes avoids bot messages (subtype==='bot_message') and URL previews (subtype==='message_changed')
-  if (chatEvent.hasOwnProperty('subtype') || chatEvent.channel_type !== 'im') {
+  // Ignoring all messages that have markers of being sent by this (or another) bot
+  if (chatEvent.hasOwnProperty('subtype') || chatEvent.hasOwnProperty('bot_id') || chatEvent.channel_type !== 'im') {
     debug('chatEvent ignored in chat.js read');
     return;
   }
@@ -68,7 +68,7 @@ const send = (channel, message = 'I am a bot. My name is Rob.') => {
   const payload = JSON.stringify({
     channel: channel,
     text: message,
-    as_user: false,
+    as_user: true,
   });
 
   // Handle responses -- mainly for testing, disable in production to avoid overwhelming logs
