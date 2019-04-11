@@ -1,5 +1,5 @@
 // TIP = ticket in progress
-const ticket = require('./ticket');
+const ticket = require('../ticket');
 
 // Helper function to create new tickets for ticketsInProgress
 // Modify this return object to control/change the content/order of questions

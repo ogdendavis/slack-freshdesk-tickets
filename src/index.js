@@ -7,7 +7,7 @@ const qs = require('querystring');
 const ticket = require('./ticket');
 const signature = require('./verifySignature');
 const debug = require('debug')('slash-command-template:index');
-const chat = require('./chat');
+const chat = require('./chat/index');
 const commandTicket = require('./commands/ticket');
 const commandWebhelp = require('./commands/webhelp');
 

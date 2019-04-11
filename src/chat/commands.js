@@ -1,6 +1,6 @@
 // Used to identify and execute commands in incoming chat messages
 
-const chatTIP = require('./chatTIP');
+const manageTIP = require('./manageTIP');
 
 const checkForCommand = (text) => {
   // Convert chatText to lowercase and remove punctuation
@@ -15,7 +15,7 @@ const execute = (command, user=false) => {
   switch (command) {
     case('start'):
     case('ticket'):
-      response.newTicket = chatTIP.makeNewTIP(user);
+      response.newTicket = manageTIP.makeNewTIP(user);
       response.message = 'Ok, let\'s make a new web support ticket for you! :computer: :ticket: :sunglasses:';
       break;
     case('cancel'):
