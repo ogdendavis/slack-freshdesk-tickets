@@ -2,6 +2,7 @@
 const debug = require('debug')('slash-command-template:index');
 const ticket = require('./ticket');
 const webhelp = require('./webhelp');
+const newaccount = require('./newaccount');
 
 const execute = (command_text, desc_text, trigger_id, user_id, res) => {
   // If command executes successfully, success is redefined to true in switch/case
@@ -15,7 +16,7 @@ const execute = (command_text, desc_text, trigger_id, user_id, res) => {
       success = webhelp.execute(user_id, res);
       break;
     case '/newaccount':
-      console.log('new account!');
+      success = newaccount.execute();
     default:
       debug('no recognized command');
   }
