@@ -8,8 +8,8 @@ const ticket = require('./ticket');
 const signature = require('./verifySignature');
 const debug = require('debug')('slash-command-template:index');
 const chat = require('./chat');
-const commandTicket = require('./commandTicket');
-const commandWebhelp = require('./commandWebhelp');
+const commandTicket = require('./commands/ticket');
+const commandWebhelp = require('./commands/webhelp');
 
 const app = express();
 
@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
 app.post('/command', (req, res) => {
   // extract the slash command text, and trigger ID from payload
   const { text, user_id, trigger_id } = req.body;
-  
+
   // Verify the signing secret
   if (signature.isVerified(req)) {
     // Now handle the commands!
@@ -49,7 +49,7 @@ app.post('/command', (req, res) => {
         commandTicket.execute(text, trigger_id, res);
         break;
       case '/webhelp':
-        commandWebhelp.execute(user_id);
+        commandWebhelp.execute(user_id, res);
         break;
       default:
         debug('no recognized command');
