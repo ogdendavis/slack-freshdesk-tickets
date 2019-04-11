@@ -3,7 +3,7 @@ const axios = require('axios');
 const qs = require('querystring');
 const debug = require('debug')('slash-command-template:commandTicket');
 
-const execute = (text, trigger_id, res) => {
+const execute = (desc_text, trigger_id, res) => {
   // create the dialog payload - includes the dialog structure, Slack API token,
   // and trigger ID
   const dialog = {
@@ -18,7 +18,7 @@ const execute = (text, trigger_id, res) => {
           label: 'Title',
           type: 'text',
           name: 'title',
-          value: text,
+          value: desc_text,
         },
         {
           label: 'Client',
@@ -74,14 +74,18 @@ const execute = (text, trigger_id, res) => {
   };
 
   // open the dialog by calling dialogs.open method and sending the payload
-  axios.post('https://slack.com/api/dialog.open', qs.stringify(dialog))
-    .then((result) => {
-      debug('dialog.open: %o', result.data);
-      res.send('');
-    }).catch((err) => {
-      debug('dialog.open call failed: %o', err);
-      res.sendStatus(500);
-    });
+  try {
+    axios.post('https://slack.com/api/dialog.open', qs.stringify(dialog))
+      .then((result) => {
+        debug('dialog.open: %o', result.data);
+      }).catch((err) => {
+        debug('dialog.open call failed: %o', err);
+      });
+    return true;
+  }
+  catch {
+    return false;
+  }
 }
 
 module.exports = { execute };

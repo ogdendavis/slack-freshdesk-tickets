@@ -8,8 +8,7 @@ const ticket = require('./ticket');
 const signature = require('./verifySignature');
 const debug = require('debug')('slash-command-template:index');
 const chat = require('./chat/index');
-const commandTicket = require('./commands/ticket');
-const commandWebhelp = require('./commands/webhelp');
+const command = require('./commands/index');
 
 const app = express();
 
@@ -38,22 +37,13 @@ app.get('/', (req, res) => {
  * Checks verification token and opens a dialog to capture more info.
  */
 app.post('/command', (req, res) => {
-  // extract the slash command text, and trigger ID from payload
-  const { text, user_id, trigger_id } = req.body;
-
   // Verify the signing secret
   if (signature.isVerified(req)) {
-    // Now handle the commands!
-    switch (req.body.command) {
-      case '/ticket':
-        commandTicket.execute(text, trigger_id, res);
-        break;
-      case '/webhelp':
-        commandWebhelp.execute(user_id, res);
-        break;
-      default:
-        debug('no recognized command');
-    }
+    // extract needed info from payload
+    const { user_id, trigger_id } = req.body;
+    const command_text = req.body.command;
+    const desc_text = req.body.text;
+    command.execute(command_text, desc_text, trigger_id, user_id, res);
   } else {
     debug('Verification token mismatch');
     res.sendStatus(404);
