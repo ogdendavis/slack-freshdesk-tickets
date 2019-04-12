@@ -11,7 +11,7 @@ const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
  *  Send ticket creation confirmation via
  *  chat.postMessage to the user who created it
  */
-const sendConfirmation = (ticket) => {
+const sendSlackConfirmation = (ticket) => {
   // Hard-coded channel is to #web-tickets
   axios.post('https://slack.com/api/chat.postMessage', qs.stringify({
     token: process.env.SLACK_BOT_TOKEN,
@@ -61,9 +61,9 @@ const sendConfirmation = (ticket) => {
       },
     ]),
   })).then((result) => {
-    debug('sendConfirmation: %o', result.data);
+    debug('sendSlackConfirmation: %o', result.data);
   }).catch((err) => {
-    debug('sendConfirmation error: %o', err);
+    debug('sendSlackConfirmation error: %o', err);
     console.error(err);
   });
 };
@@ -99,11 +99,9 @@ const createFreshTicket = (ticket) => {
   xhr.send(payload);
 };
 
-
-
 // Create helpdesk ticket. Call users.find to get the user's email address
 // from their user ID
-const create = (userId, submission) => {
+const create = (userId, ticketType, submission) => {
   const ticket = {};
 
   const fetchUserEmail = new Promise((resolve, reject) => {
@@ -125,12 +123,13 @@ const create = (userId, submission) => {
     ticket.resources = submission.resources;
     ticket.due = submission.due;
     ticket.urgency = submission.urgency;
-    sendConfirmation(ticket);
-    // Sends ticket to Freshdesk
-    createFreshTicket(ticket);
+
+    //buildTicket(ticket, ticketType);
+    sendSlackConfirmation(ticket, ticketType);
+    createFreshTicket(ticket, ticketType);
 
     return ticket;
   }).catch((err) => { console.error(err); });
 };
 
-module.exports = { create, sendConfirmation };
+module.exports = { create };

@@ -66,7 +66,7 @@ app.post('/interactive', (req, res) => {
     res.send('');
 
     // create Helpdesk ticket
-    ticket.create(body.user.id, body.submission);
+    ticket.create(body.user.id, body.callback_id, body.submission);
   } else {
     debug('Token mismatch');
     res.sendStatus(404);

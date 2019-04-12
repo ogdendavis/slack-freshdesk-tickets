@@ -11,7 +11,7 @@ const execute = (desc_text, trigger_id, res) => {
     trigger_id,
     dialog: JSON.stringify({
       title: 'Submit a helpdesk ticket',
-      callback_id: 'submit-ticket',
+      callback_id: 'webticket',
       submit_label: 'Submit',
       elements: [
         {

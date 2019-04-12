@@ -11,7 +11,7 @@ const execute = (trigger_id) => {
     trigger_id,
     dialog: JSON.stringify({
       title: 'New Communications Acct',
-      callback_id: 'submit-ticket',
+      callback_id: 'newaccount',
       submit_label: 'Submit',
       elements: [
         {

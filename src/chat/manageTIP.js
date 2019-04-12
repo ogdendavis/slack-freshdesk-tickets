@@ -67,7 +67,7 @@ const sendTIP = (finishedTicket) => {
     urgency: 'Medium',
   }
 
-  ticket.create(finishedTicket.user, formattedTicket);
+  ticket.create(finishedTicket.user, 'webticket', formattedTicket);
 }
 
 // Slack reformats message input that it recognizes as urls
