@@ -50,7 +50,7 @@ const execute = (trigger_id) => {
           label: 'Requested Email',
           type: 'text',
           subtype: 'email',
-          name: 'description',
+          name: 'requested_email',
           hint: 'What is the preferred email address for this person? Generally, full-time staff are [first]@smg and interns/part-time are [firstinitial][last]@smg',
         },
         {
@@ -58,10 +58,10 @@ const execute = (trigger_id) => {
           type: 'select',
           name: 'slack',
           hint: 'Does this person need a Slack account?',
-          value: 'true',
+          value: 'yes',
           options: [
-            { label: 'Yes', value: 'true', },
-            { label: 'No', value: 'false', },
+            { label: 'Yes', value: 'yes', },
+            { label: 'No', value: 'no', },
           ],
         },
         {
@@ -69,10 +69,10 @@ const execute = (trigger_id) => {
           type: 'select',
           name: 'active_collab',
           hint: 'Does this person need to be added to Active Collab?',
-          value: 'false',
+          value: 'no',
           options: [
-            { label: 'Yes', value: 'true', },
-            { label: 'No', value: 'false', },
+            { label: 'Yes', value: 'yes', },
+            { label: 'No', value: 'no', },
           ],
         },
         {
@@ -80,10 +80,10 @@ const execute = (trigger_id) => {
           type: 'select',
           name: 'freshdesk',
           hint: 'Does this person need to be added to FreshDesk?',
-          value: 'false',
+          value: 'no',
           options: [
-            { label: 'Yes', value: 'true', },
-            { label: 'No', value: 'false', },
+            { label: 'Yes', value: 'yes', },
+            { label: 'No', value: 'no', },
           ],
         },
       ],

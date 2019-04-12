@@ -11,7 +11,7 @@ const buildTicket = (ticketData) => {
     case 'webticket':
       return webTicket.build(ticketData);
     case 'newaccount':
-      break;
+      return newAccount.build(ticketData);
     default:
       return false;
   }
@@ -23,6 +23,7 @@ const createFreshdeskTicket = (ticket) => {
       webTicket.dispatch(ticket);
       break;
     case 'newaccount':
+      newAccount.dispatch(ticket);
       break;
     default:
       return false;
@@ -35,6 +36,7 @@ const sendSlackConfirmation = (ticket) => {
       webTicket.confirm(ticket);
       break;
     case 'newaccount':
+      newAccount.confirm(ticket);
       break;
     default:
       return false;

@@ -44,7 +44,7 @@ const dispatch = (ticket) => {
   // Create JSON object with data for the Freshdesk ticket
   const payload = JSON.stringify({
     'email': ticket.userEmail,
-    'subject': ticket.title,
+    'subject': `New web help ticket: ${ticket.title}`,
     'description': ticketBody,
     'status': 2,
     'priority': priority,
@@ -66,7 +66,6 @@ const confirm = (ticket) => {
       {
         title: `Ticket created for ${ticket.userEmail}`,
         title_link: 'https://sachsmedia.freshdesk.com/a/tickets',
-        text: ticket.text,
         fields: [
           {
             title: 'Title',
