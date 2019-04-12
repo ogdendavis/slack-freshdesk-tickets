@@ -1,77 +1,89 @@
 // Manages /newaccount command
 const axios = require('axios');
 const qs = require('querystring');
-const debug = require('debug')('slash-command-template:commandTicket');
+const debug = require('debug');
 
-const execute = () => {
-  console.log('new account!');
-  return true;
-}
-
-const executeFROMTICKET = (text, trigger_id, res) => {
+const execute = (trigger_id) => {
   // create the dialog payload - includes the dialog structure, Slack API token,
   // and trigger ID
   const dialog = {
     token: process.env.SLACK_OAUTH_TOKEN,
     trigger_id,
     dialog: JSON.stringify({
-      title: 'Submit a helpdesk ticket',
+      title: 'New Communications Acct',
       callback_id: 'submit-ticket',
       submit_label: 'Submit',
       elements: [
         {
-          label: 'Title',
+          label: 'Requestor Name',
           type: 'text',
-          name: 'title',
-          value: text,
+          name: 'requestor',
         },
         {
-          label: 'Client',
+          label: 'Requestor Email',
           type: 'text',
-          name: 'client',
+          subtype: 'email',
+          name: 'requestor_email',
         },
         {
-          label: 'Website',
-          type: 'text',
-          subtype: 'url',
-          name: 'url',
-          hint: 'The URL at which something needs to be done',
-        },
-        {
-          label: 'Website username',
-          type: 'text',
-          name: 'user',
-        },
-        {
-          label: 'Website password',
-          type: 'text',
-          name: 'pass',
-        },
-        {
-          label: 'Description',
-          type: 'textarea',
-          name: 'description',
-        },
-        {
-          label: 'Resources',
-          type: 'text',
-          subtype: 'url',
-          name: 'resources',
-          hint: 'Link to Google Drive folder which contains any resources needed to complete the task',
-        },
-        {
-          label: 'Requested completion date',
-          type: 'text',
-          name: 'due',
-        },
-        {
-          label: 'Urgency',
+          label: 'Which office?',
           type: 'select',
-          name: 'urgency',
+          name: 'office',
+          hint: 'Where will this person\'s home office be?',
           options: [
-            { label: 'Low', value: 'Low' },
-            { label: 'Medium', value: 'Medium' },
-            { label: 'High', value: 'High' },
+            { label: 'Tallahassee', value: 'Tallahassee', },
+            { label: 'Orlando', value: 'Orlando', },
+            { label: 'Remote', value: 'Remote', },
+          ],
+        },
+        {
+          label: 'First Name',
+          type: 'text',
+          name: 'first',
+        },
+        {
+          label: 'Last Name',
+          type: 'text',
+          name: 'last',
+        },
+        {
+          label: 'Requested Email',
+          type: 'text',
+          subtype: 'email',
+          name: 'description',
+          hint: 'What is the preferred email address for this person? Generally, full-time staff are [first]@smg and interns/part-time are [firstinitial][last]@smg',
+        },
+        {
+          label: 'Slack',
+          type: 'select',
+          name: 'slack',
+          hint: 'Does this person need a Slack account?',
+          value: 'true',
+          options: [
+            { label: 'Yes', value: 'true', },
+            { label: 'No', value: 'false', },
+          ],
+        },
+        {
+          label: 'Active Collab',
+          type: 'select',
+          name: 'active_collab',
+          hint: 'Does this person need to be added to Active Collab?',
+          value: 'false',
+          options: [
+            { label: 'Yes', value: 'true', },
+            { label: 'No', value: 'false', },
+          ],
+        },
+        {
+          label: 'FreshDesk',
+          type: 'select',
+          name: 'freshdesk',
+          hint: 'Does this person need to be added to FreshDesk?',
+          value: 'false',
+          options: [
+            { label: 'Yes', value: 'true', },
+            { label: 'No', value: 'false', },
           ],
         },
       ],

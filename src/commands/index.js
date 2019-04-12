@@ -16,7 +16,7 @@ const execute = (command_text, desc_text, trigger_id, user_id, res) => {
       success = webhelp.execute(user_id, res);
       break;
     case '/newaccount':
-      success = newaccount.execute();
+      success = newaccount.execute(trigger_id);
     default:
       debug('no recognized command');
   }
