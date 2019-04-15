@@ -23,7 +23,7 @@ const execute = (command, user=false) => {
       response.message = 'Ok, I\'m deleting this ticket. :ticket: :x:\nIf you want to start another ticket, just send me another message, or use the /ticket command!';
       break;
     case('help'):
-      response.message = ':wave: Hi, I\'m Rob Bot, your friendly neighborhood web help robot! :robot_face:\nI\'m here to help you make a Freshdesk ticket for web support issues.\n\nHere are the commands you can give me:\n* `ticket` - Start a ticket! :white_check_mark:\n* `cancel` - Delete the ticket currently in progress. :x:\n* `help` - See this helpful message again! :scroll:\n\nThat\'s it. Happy ticketing!';
+      response.message = ':wave: Hi, I\'m Rob Bot, your friendly neighborhood web help robot! :robot_face:\nI\'m here to help you make a Freshdesk ticket for web support issues.\n\nYou can give me commands by just typing these words in this channel:\n* `ticket` - Start a ticket! :white_check_mark:\n* `cancel` - Delete the ticket currently in progress. :x:\n* `help` - See this helpful message again! :scroll:\n\nYou can also use these slash commands from any SMG Slack channel to submit SMG forms via Slack:\n* `/ticket` - Submit a web help form\n* `/newaccount` - Submit a new SMG communication account form\n* `/requestleave` - Submit a request for leave form\n* `/pretravel` - Submit a new pre-travel report form\n\nThat\'s it. Happy ticketing!';
       break;
     case('silly'):
       response.message = silliness[Math.floor(Math.random()*silliness.length)];
