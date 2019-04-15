@@ -6,6 +6,7 @@ const users = require('../users');
 const newAccount = require('./newaccount');
 const webTicket = require('./webticket');
 const vacay = require('./vacay');
+const preTravel = require('./pretravel')
 
 const buildTicket = (ticketData) => {
   switch(ticketData.type) {
@@ -15,6 +16,8 @@ const buildTicket = (ticketData) => {
       return newAccount.build(ticketData);
     case 'vacay':
       return vacay.build(ticketData);
+    case 'pretravel':
+      return preTravel.build(ticketData);
     default:
       return false;
   }
@@ -31,6 +34,9 @@ const createFreshdeskTicket = (ticket) => {
     case 'vacay':
       vacay.dispatch(ticket);
       break;
+    case 'pretravel':
+      preTravel.dispatch(ticket);
+      break;
     default:
       return false;
   }
@@ -46,6 +52,9 @@ const sendSlackConfirmation = (ticket) => {
       break;
     case 'vacay':
       vacay.confirm(ticket);
+      break;
+    case 'pretravel':
+      preTravel.confirm(ticket);
       break;
     default:
       return false;
