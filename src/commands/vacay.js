@@ -3,20 +3,15 @@ const axios = require('axios');
 const qs = require('querystring');
 const debug = require('debug');
 
-const execute = () => {
-  console.log('Yay for vacay!');
-  return true;
-}
-
-const executeFROMNEWACCOUNT = (trigger_id) => {
+const execute = (trigger_id) => {
   // create the dialog payload - includes the dialog structure, Slack API token,
   // and trigger ID
   const dialog = {
     token: process.env.SLACK_OAUTH_TOKEN,
     trigger_id,
     dialog: JSON.stringify({
-      title: 'New Communications Acct',
-      callback_id: 'newaccount',
+      title: 'Request for Leave',
+      callback_id: 'vacay',
       submit_label: 'Submit',
       elements: [
         {
@@ -31,65 +26,50 @@ const executeFROMNEWACCOUNT = (trigger_id) => {
           name: 'requestor_email',
         },
         {
-          label: 'Which office?',
+          label: 'What type of leave are you requesting?',
           type: 'select',
-          name: 'office',
-          hint: 'Where will this person\'s home office be?',
+          name: 'leave_type',
           options: [
-            { label: 'Tallahassee', value: 'Tallahassee', },
-            { label: 'Orlando', value: 'Orlando', },
-            { label: 'Remote', value: 'Remote', },
+            { label: 'Annual Leave', value: 'annual', },
+            { label: 'Sick Leave', value: 'sick', },
+            { label: 'Personal Day', value: 'personal', },
           ],
         },
         {
-          label: 'First Name',
+          label: 'Leave Start',
           type: 'text',
-          name: 'first',
+          name: 'requested_start',
+          hint: 'Requested date and time that leave begins.',
         },
         {
-          label: 'Last Name',
+          label: 'Leave End',
           type: 'text',
-          name: 'last',
+          name: 'requested_end',
+          hint: 'Requested date and time that leave ends.',
         },
         {
-          label: 'Requested Email',
+          label: 'Total Hours',
           type: 'text',
-          subtype: 'email',
-          name: 'requested_email',
-          hint: 'What is the preferred email address for this person? Generally, full-time staff are [first]@smg and interns/part-time are [firstinitial][last]@smg',
+          name: 'requested_hours',
+          hint: 'The total number of leave hours in this request',
         },
         {
-          label: 'Slack',
-          type: 'select',
-          name: 'slack',
-          hint: 'Does this person need a Slack account?',
-          value: 'yes',
-          options: [
-            { label: 'Yes', value: 'yes', },
-            { label: 'No', value: 'no', },
-          ],
+          label: 'Notes',
+          type: 'textarea',
+          name: 'notes',
+          hint: 'Please provide any additional context or information needed for this request',
         },
         {
-          label: 'Active Collab',
-          type: 'select',
-          name: 'active_collab',
-          hint: 'Does this person need to be added to Active Collab?',
-          value: 'no',
-          options: [
-            { label: 'Yes', value: 'yes', },
-            { label: 'No', value: 'no', },
-          ],
+          label: 'Current Leave Balance',
+          type: 'text',
+          name: 'current_leave_balance',
+          hint: 'Balance of Annual Leave and One Personal Day BEFORE this request',
         },
         {
-          label: 'FreshDesk',
-          type: 'select',
-          name: 'freshdesk',
-          hint: 'Does this person need to be added to FreshDesk?',
-          value: 'no',
-          options: [
-            { label: 'Yes', value: 'yes', },
-            { label: 'No', value: 'no', },
-          ],
+          label: 'Current Sick Balance',
+          type: 'text',
+          name: 'current_sick_balance',
+          hint: 'Balance of Annual Sick Leave BEFORE this request',
         },
       ],
     }),
