@@ -121,7 +121,8 @@ const chatHandler = (user, channel, text, thisTicket) => {
   else {
     // Remember to store the last answer!
     thisTicket.questions[thisTicket.onQuestion].reply = text;
-    send(channel, 'Ok, great! I should have everything I need. Your ticket has been created, and you will hear from the web team shortly. :ticket: :white_check_mark:');
+    // Confirmation message below replaced by confirmation message in tickets.index sendUserConfirmation
+    // send(channel, 'Ok, great! I should have everything I need. Your ticket has been created, and you will hear from the web team shortly. :ticket: :white_check_mark:');
     manageTIP.sendTIP(thisTicket);
     delete ticketsInProgress[user];
   }
