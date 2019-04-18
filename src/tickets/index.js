@@ -7,6 +7,7 @@ const newAccount = require('./newaccount');
 const webTicket = require('./webticket');
 const vacay = require('./vacay');
 const preTravel = require('./pretravel')
+const chat = require('../chat/index');
 
 const buildTicket = (ticketData) => {
   switch(ticketData.type) {
@@ -61,6 +62,30 @@ const sendSlackConfirmation = (ticket) => {
   }
 }
 
+const sendUserConfirmation = (ticket) => {
+  console.log(ticket);
+  let prettyType = '';
+
+  switch (ticket.type) {
+    case 'webticket':
+      prettyType = 'web help ticket';
+      break;
+    case 'newaccount':
+      prettyType = 'new SMG communication account request';
+      break;
+    case 'vacay':
+      prettyType = 'request for leave';
+      break;
+    case 'pretravel':
+      prettyType = 'pre-travel report'
+      break;
+    default:
+      prettyType = 'help ticket';
+  }
+
+  chat.send(ticket.userId, `Your ${prettyType} has been submitted! You should receive an email from Freshdesk confirming the ticket for this issue; if you don't see it, check your spam folder!`);
+}
+
 const create = (userId, ticketType, submission) => {
 
   const fetchUserEmail = new Promise((resolve, reject) => {
@@ -81,6 +106,7 @@ const create = (userId, ticketType, submission) => {
 
     createFreshdeskTicket(ticket);
     sendSlackConfirmation(ticket);
+    sendUserConfirmation(ticket);
 
     return ticket;
   }).catch((err) => { console.error(err); });
