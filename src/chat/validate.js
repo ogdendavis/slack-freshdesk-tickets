@@ -1,12 +1,12 @@
 // Used to validate responses to ticket questions
 
-const isValid = (text, ticket) => {
+const isValid = (text, thisTicket) => {
   // If we haven't asked a question, no need to validate!
-  if (ticket.onQuestion < 0) {
+  if (thisTicket.onQuestion < 0) {
     return true;
   }
 
-  switch (ticket.onQuestion) {
+  switch (thisTicket.onQuestion) {
     case 1: // One-sentence overview
       return sentenceCheck(text);
     case 2: // website URL

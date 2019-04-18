@@ -1,5 +1,7 @@
 // Manage creation of different kinds of tickets
 // Manage sending tickets to Freshdesk, and sending confirmation to Slack
+const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+
 const debug = require('debug');
 const users = require('../users');
 
@@ -7,7 +9,6 @@ const newAccount = require('./newaccount');
 const webTicket = require('./webticket');
 const vacay = require('./vacay');
 const preTravel = require('./pretravel')
-const chat = require('../chat/index');
 
 const buildTicket = (ticketData) => {
   switch(ticketData.type) {
@@ -62,8 +63,16 @@ const sendSlackConfirmation = (ticket) => {
   }
 }
 
+// Recreating functionality of chat.send here to avoid circular dependency
+// Can't remove tickets as a dependency, of chat, so removing chat as a dependency of tickets!
 const sendUserConfirmation = (ticket) => {
-  console.log(ticket);
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://slack.com/api/chat.postMessage', true);
+
+  xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+  xhr.setRequestHeader('Authorization', `Bearer ${process.env.SLACK_BOT_TOKEN}`);
+
+  // Create the response!
   let prettyType = '';
 
   switch (ticket.type) {
@@ -83,7 +92,13 @@ const sendUserConfirmation = (ticket) => {
       prettyType = 'help ticket';
   }
 
-  chat.send(ticket.userId, `Your ${prettyType} has been submitted! You should receive an email from Freshdesk confirming the ticket for this issue; if you don't see it, check your spam folder!`);
+  const payload = JSON.stringify({
+    channel: ticket.userId,
+    text: `Your ${prettyType} has been submitted! You should receive an email from Freshdesk confirming the ticket for this issue; if you don't see it, check your spam folder!`,
+    as_user: true,
+  });
+
+  xhr.send(payload);
 }
 
 const create = (userId, ticketType, submission) => {

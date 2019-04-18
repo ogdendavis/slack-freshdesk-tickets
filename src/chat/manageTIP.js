@@ -1,5 +1,5 @@
 // TIP = ticket in progress
-const ticket = require('../tickets/index');
+const tickets = require('../tickets/index');
 
 // Helper function to create new tickets for ticketsInProgress
 // Modify this return object to control/change the content/order of questions
@@ -67,7 +67,7 @@ const sendTIP = (finishedTicket) => {
     urgency: 'Medium',
   }
 
-  ticket.create(finishedTicket.user, 'webticket', formattedTicket);
+  tickets.create(finishedTicket.user, 'webticket', formattedTicket);
 }
 
 // Slack reformats message input that it recognizes as urls
