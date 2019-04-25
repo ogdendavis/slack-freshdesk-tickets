@@ -41,5 +41,4 @@ const credentialCheck = (credential) => {
   return !credential.includes(' ');
 }
 
-
-module.exports = { isValid };
+module.exports = { isValid, urlCheck };

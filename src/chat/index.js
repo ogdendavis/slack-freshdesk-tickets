@@ -72,20 +72,29 @@ const send = (channel, message = 'I am a bot. My name is Rob.') => {
     as_user: true,
   });
 
-  // Handle responses -- mainly for testing, disable in production to avoid overwhelming logs
-  // xhr.onreadystatechange = function() {
-  //   if (this.readyState === XMLHttpRequest.DONE && this.status === 201) {
-  //     console.log('Success');
-  //   }
-  //   else {
-  //     console.log(this.status);
-  //     console.log(this.responseText);
-  //   }
-  // };
-
-  // A small delay makes the chat feel less abrupt
-  // setTimeout(xhr.send, 150, payload);
   xhr.send(payload);
+}
+
+// In chat, Slack converts written URLs into special objects in the format
+// <[live url with protocol]|[url as typed by user]>.
+// This messes with Freshdesk, so fix it!
+const sanitizeChatText = (slackInput) => {
+  // Helper function to reverse result of urlCheck
+  const noUrl = (word) => {
+    return !chatValidate.urlCheck(word);
+  }
+  // Split into an array so we can check each word
+  const slackArray = slackInput.split(' ');
+  
+  if ( slackArray.every(noUrl) ) {
+    return slackInput;
+  }
+
+  // Strip out Slack's special URL characters, and duplicate text
+  const sanitizedArray = slackArray.map(word => {
+    return word[0] === '<' ? word.replace(/[<>]/g, '').split('|')[0] : word;
+  });
+  return sanitizedArray.join(' ');
 }
 
 // Main function -- updates ticketsInProgress with incoming info until ready to send
@@ -99,6 +108,9 @@ const chatHandler = (user, channel, text, thisTicket) => {
 
   const nextQuestion = thisTicket.onQuestion + 1;
 
+  // Sanitize input for Slack URL objects -- if not, URLs get lost in Freshdesk
+  const sanitizedText = sanitizeChatText(text);
+
   // The first time we get here, we need to ask the first question!
   // onQuestion is initialized as -1
   if (nextQuestion === 0) {
@@ -111,7 +123,7 @@ const chatHandler = (user, channel, text, thisTicket) => {
   // Case for chats that are replies to questions
   else if (nextQuestion < thisTicket.questions.howMany) {
     // Store the answer, increment the counter, send the next question
-    thisTicket.questions[thisTicket.onQuestion].reply = text;
+    thisTicket.questions[thisTicket.onQuestion].reply = sanitizedText;
     thisTicket.onQuestion++;
     send(channel, thisTicket.questions[thisTicket.onQuestion].query);
     // Update the ticket in progress
@@ -120,7 +132,7 @@ const chatHandler = (user, channel, text, thisTicket) => {
   // Case for last question answered
   else {
     // Remember to store the last answer!
-    thisTicket.questions[thisTicket.onQuestion].reply = text;
+    thisTicket.questions[thisTicket.onQuestion].reply = sanitizedText;
     // Confirmation message below replaced by confirmation message in tickets.index sendUserConfirmation
     // send(channel, 'Ok, great! I should have everything I need. Your ticket has been created, and you will hear from the web team shortly. :ticket: :white_check_mark:');
     manageTIP.sendTIP(thisTicket);

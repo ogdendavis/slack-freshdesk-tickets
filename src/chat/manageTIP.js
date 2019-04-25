@@ -58,24 +58,16 @@ const sendTIP = (finishedTicket) => {
   const formattedTicket = {
     title: submission[1],
     client: submission[0],
-    url: slackSanitize(submission[2]),
+    url: submission[2],
     user: submission[3],
     pass: submission[4],
     description: submission[5],
-    resources: slackSanitize(submission[6]),
+    resources: submission[6],
     due: submission[7],
     urgency: 'Medium',
   }
 
   tickets.create(finishedTicket.user, 'webticket', formattedTicket);
-}
-
-// Slack reformats message input that it recognizes as urls
-// If starts with protocol: 'http://google.com' => '<http://google.com>'
-// If no protocol: 'google.com' => '<http://google.com|google.com>'
-// This effs with ticket creation, so strip out the extra to pass a simple string
-const slackSanitize = (text) => {
-  return text.split('|')[0].slice(1);
 }
 
 module.exports = { makeNewTIP, sendTIP };
