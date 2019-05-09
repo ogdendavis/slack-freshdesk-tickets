@@ -28,7 +28,7 @@ const urlCheck = (slackifiedText) => {
   // If starts with protocol: 'http://google.com' => '<http://google.com>'
   // If no protocol: 'google.com' => '<http://google.com|google.com>'
   // Piggyback this behavior to validate URLs!
-  return /^<http[A-Za-z0-9.\/|:]*>$/.test(slackifiedText);
+  return /^<http[A-Za-z0-9\-._~:\/?#\[\]@!$&'()*+,;=|]*>$/.test(slackifiedText);
 }
 
 const sentenceCheck = (sentence) => {
